@@ -6,12 +6,15 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "prepare": "npm install $(npm pack .. | tail -1)",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
     "react": "16.11.0",
-    "react-native": "0.62.2"
+    "react-native": "0.62.2",
+    "react-native-config": "^1.0.0",
+    "react-native-tweet-composer": "file:react-native-tweet-composer-1.0.0.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

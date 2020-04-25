@@ -194,7 +194,6 @@
 				17060114F16AF516C091CE2E /* Pods-example-tvOSTests.debug.xcconfig */,
 				8E4BDDDD3A55A7B4DF3A071E /* Pods-example-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -377,7 +376,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		1CA8F9D1BCFD624AFD8901DA /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

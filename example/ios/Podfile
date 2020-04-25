@@ -77,8 +77,9 @@ target 'example' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'react-native-tweet-composer', :path => '../../'
+  #pod 'react-native          -tweet-composer', :path => '../../'
 
+  pod 'react-native-tweet-composer', :path => '../node_modules/react-native-tweet-composer'
 
   target 'exampleTests' do
     inherit! :complete

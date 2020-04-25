@@ -8,9 +8,13 @@
 node_modules/
 npm-debug.log
 yarn-error.log
+
+# library
+*/react-native-tweet-composer*
  
 # Environment variables
 *.env 
+*.env.local
 
 # Xcode
 #

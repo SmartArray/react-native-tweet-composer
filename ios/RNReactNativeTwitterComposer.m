@@ -1,4 +1,5 @@
 
+#import <React/RCTConvert.h>
 #import <TwitterKit/TWTRKit.h>
 #import "RNReactNativeTwitterComposer.h"
 
@@ -10,13 +11,16 @@
 }
 RCT_EXPORT_MODULE()
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(init: (NSString *)consumerKey consumerSecret:(NSString *)consumerSecret)
+RCT_EXPORT_METHOD(init: (NSString *)consumerKey
+                  consumerSecret:(NSString *)consumerSecret
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 {
     [[Twitter sharedInstance] startWithConsumerKey:consumerKey consumerSecret:consumerSecret];
-    return 0;
+    resolve(nil);
 }
 
-RCT_EXPORT_METHOD(logIn: (RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(signIn: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession * _Nullable sessionData, NSError * _Nullable error) {
@@ -33,18 +37,52 @@ RCT_EXPORT_METHOD(logIn: (RCTPromiseResolveBlock)resolve
                 resolve(body);
             }];
         } else {
-            reject(@"Error", @"Twitter signin error", error);
+            reject(@"Error", @"Twitter SignIn Error", error);
         }
     }];
 }
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(createTweet: (void*)resolve)
+RCT_EXPORT_METHOD(createTweet: (NSDictionary*)options
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
 {
-    TWTRComposer *composer = [[TWTRComposer alloc] init];
-    return composer;
+//    TWTRComposer *composer = [[TWTRComposer alloc] init];
+    
+    UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
+    
+    // Check if current session has users logged in
+    if ([[Twitter sharedInstance].sessionStore hasLoggedInUsers]) {
+        TWTRComposerViewController *composer = [TWTRComposerViewController emptyComposer];
+        UIImage* image = nil;
+        
+        if (options[@"image"] != nil) {
+            image = [RCTConvert UIImage:options[@"image"]];
+        }
+        
+        composer = [composer initWithInitialText:options[@"text"] image:image videoData:nil];
+        [vc presentViewController:composer animated:YES completion:nil];
+        resolve(nil);
+    } else {
+        [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession *session, NSError *error) {
+            if (session) {
+                TWTRComposerViewController *composer = [TWTRComposerViewController emptyComposer];
+                UIImage* image = nil;
+                
+                if (options[@"image"] != nil) {
+                    image = [RCTConvert UIImage:options[@"image"]];
+                }
+                
+                composer = [composer initWithInitialText:options[@"text"] image:image videoData:nil];
+                [vc presentViewController:composer animated:YES completion:nil];
+                resolve(nil);
+            } else {
+                reject(@"Error", @"Not signed in", error);
+            }
+        }];
+    }
 }
 
-RCT_EXPORT_METHOD(logOut)
+RCT_EXPORT_METHOD(logout)
 {
     TWTRSessionStore *store = [[Twitter sharedInstance] sessionStore];
     NSString *userID = store.session.userID;
@@ -52,4 +90,3 @@ RCT_EXPORT_METHOD(logOut)
 }
 
 @end
-  

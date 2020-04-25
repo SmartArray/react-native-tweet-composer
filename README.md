@@ -5,6 +5,20 @@
 
 `$ npm install react-native-tweet-composer --save`
 
+## Run the example
+```
+cd example
+
+# packs and installs the library
+npm run prepare 
+
+# Install all dependencies
+npm install
+
+# Run Packager
+react-native start
+```
+
 ### Mostly automatic installation
 
 `$ react-native link react-native-tweet-composer`
