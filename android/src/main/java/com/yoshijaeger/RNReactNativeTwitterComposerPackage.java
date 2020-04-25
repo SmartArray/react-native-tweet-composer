@@ -16,7 +16,7 @@ public class RNReactNativeTwitterComposerPackage implements ReactPackage {
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new TwitterSigninModule(reactContext));
+        modules.add(new RNReactNativeTwitterComposerModule(reactContext));
         return modules;
     }
 

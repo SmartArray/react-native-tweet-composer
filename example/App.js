@@ -24,6 +24,7 @@ import RNReactNativeTwitterComposer from 'react-native-tweet-composer';
 // Import API Keys specified in .env file (located in your project root dir)
 import Config from 'react-native-config';
 
+// Random image
 const Porenta = require('./porenta.jpg')
 
 class TwitterTestView extends React.Component {
@@ -76,7 +77,7 @@ class TwitterTestView extends React.Component {
   }
 
   render() {
-    if (!this.state.signedIn) {
+    if (this.state.signedIn) {
       return (
         <View style={styles.body}>
           <TouchableOpacity style={styles.button} onPress={this._logout}>

@@ -98,6 +98,7 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 /**
  * The preferred build flavor of JavaScriptCore.
  *
