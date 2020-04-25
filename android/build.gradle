@@ -9,10 +9,18 @@ buildscript {
     }
 }
 
+
 apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
+
+    implementation 'com.facebook.react:react-native:+'
+    implementation "com.android.support:appcompat-v7:27.1.1"
+    implementation('com.twitter.sdk.android:twitter-core:3.3.0') {
+        transitive = true
+    }    
+
     buildToolsVersion "23.0.1"
 
     defaultConfig {
