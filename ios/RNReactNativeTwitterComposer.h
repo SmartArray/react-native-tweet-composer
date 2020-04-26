@@ -6,6 +6,7 @@
 #endif
 
 @interface RNReactNativeTwitterComposer : NSObject <RCTBridgeModule>
-
++ (UIViewController*)topViewController;
++ (UIViewController*)topViewControllerWithRootViewController:(UIViewController*)viewController;
 @end
   

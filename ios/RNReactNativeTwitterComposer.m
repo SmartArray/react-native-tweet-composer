@@ -9,6 +9,37 @@
 {
     return dispatch_get_main_queue();
 }
+
++ (UIViewController*)topViewController {
+    return [self topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+}
+
++ (UIViewController*)topViewControllerWithRootViewController:(UIViewController*)viewController {
+    if ([viewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController* tabBarController = (UITabBarController*)viewController;
+        return [self topViewControllerWithRootViewController:tabBarController.selectedViewController];
+    } else if ([viewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController* navContObj = (UINavigationController*)viewController;
+        return [self topViewControllerWithRootViewController:navContObj.visibleViewController];
+    } else if (viewController.presentedViewController && !viewController.presentedViewController.isBeingDismissed) {
+        UIViewController* presentedViewController = viewController.presentedViewController;
+        return [self topViewControllerWithRootViewController:presentedViewController];
+    }
+    else {
+        for (UIView *view in [viewController.view subviews])
+        {
+            id subViewController = [view nextResponder];
+            if ( subViewController && [subViewController isKindOfClass:[UIViewController class]])
+            {
+                if ([(UIViewController *)subViewController presentedViewController]  && ![subViewController presentedViewController].isBeingDismissed) {
+                    return [self topViewControllerWithRootViewController:[(UIViewController *)subViewController presentedViewController]];
+                }
+            }
+        }
+        return viewController;
+    }
+}
+
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(init: (NSString *)consumerKey
@@ -46,9 +77,7 @@ RCT_EXPORT_METHOD(createTweet: (NSDictionary*)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-//    TWTRComposer *composer = [[TWTRComposer alloc] init];
-    
-    UIViewController* vc = [UIApplication sharedApplication].keyWindow.rootViewController;
+    UIViewController* vc = RNReactNativeTwitterComposer.topViewController;
     
     // Check if current session has users logged in
     if ([[Twitter sharedInstance].sessionStore hasLoggedInUsers]) {
