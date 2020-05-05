@@ -3,7 +3,11 @@
 #import <TwitterKit/TWTRKit.h>
 #import "RNReactNativeTwitterComposer.h"
 
+
 @implementation RNReactNativeTwitterComposer
+
+// Global variable is ok in this case, as only one tweet composer will be shown per time
+RCTPromiseResolveBlock lastResolver;
 
 - (dispatch_queue_t)methodQueue
 {
@@ -78,10 +82,12 @@ RCT_EXPORT_METHOD(createTweet: (NSDictionary*)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     UIViewController* vc = RNReactNativeTwitterComposer.topViewController;
+    lastResolver = resolve;
     
     // Check if current session has users logged in
     if ([[Twitter sharedInstance].sessionStore hasLoggedInUsers]) {
         TWTRComposerViewController *composer = [TWTRComposerViewController emptyComposer];
+        composer.delegate = self;
         UIImage* image = nil;
         
         if (options[@"image"] != nil) {
@@ -90,11 +96,11 @@ RCT_EXPORT_METHOD(createTweet: (NSDictionary*)options
         
         composer = [composer initWithInitialText:options[@"text"] image:image videoData:nil];
         [vc presentViewController:composer animated:YES completion:nil];
-        resolve(nil);
     } else {
         [[Twitter sharedInstance] logInWithCompletion:^(TWTRSession *session, NSError *error) {
             if (session) {
                 TWTRComposerViewController *composer = [TWTRComposerViewController emptyComposer];
+                composer.delegate = self;
                 UIImage* image = nil;
                 
                 if (options[@"image"] != nil) {
@@ -103,7 +109,6 @@ RCT_EXPORT_METHOD(createTweet: (NSDictionary*)options
                 
                 composer = [composer initWithInitialText:options[@"text"] image:image videoData:nil];
                 [vc presentViewController:composer animated:YES completion:nil];
-                resolve(nil);
             } else {
                 reject(@"Error", @"Not signed in", error);
             }
@@ -116,6 +121,11 @@ RCT_EXPORT_METHOD(logout)
     TWTRSessionStore *store = [[Twitter sharedInstance] sessionStore];
     NSString *userID = store.session.userID;
     [store logOutUserID:userID];
+}
+
+- (void)composerDidSucceed:(TWTRComposerViewController *)controller withTweet:(TWTRTweet *)tweet {
+    NSDictionary *body = @{@"tweetID": tweet.tweetID};
+    lastResolver(body);
 }
 
 @end
